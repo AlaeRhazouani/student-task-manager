@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend-database-network
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - backend-database-network
+      - frontend-backend-network
+    depends_on:
+      - db
+  frontend:
+    build: ./frontend
+    environment:
+      BACKEND_URL: http://backend:5000
+    networks:
+      - frontend-backend-network
+    depends_on:
+      - backend
+    ports:
+      - 3000:3000
+
+volumes:
+  data:
+networks:
+  backend-database-network:
+  frontend-backend-network:
+

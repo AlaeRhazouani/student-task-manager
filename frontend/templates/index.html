@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Task Manager</title>
+</head>
+<body>
+    <h1>Tasks</h1>
+    <a href="/tasks/create">Create New Task</a>
+    <ul>
+        {% for task in tasks %}
+        <li>
+            <strong>{{ task[1] }}</strong> — {{ task[3] }}
+            <a href="/tasks/{{ task[0] }}/update">Edit</a>
+            <form action="/tasks/{{ task[0] }}/delete" method="POST" style="display:inline">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

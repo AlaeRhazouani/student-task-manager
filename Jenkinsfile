@@ -4,6 +4,7 @@ pipeline {
     environment {
         BACKEND_IMAGE = "ghcr.io/alaerhazouani/student-task-manager-backend"
         FRONTEND_IMAGE = "ghcr.io/alaerhazouani/student-task-manager-frontend"
+        DB_IMAGE = "ghcr.io/alaerhazouani/student-task-manager-db"
         CREDS = credentials('ghcr-token')
     }
     
@@ -22,6 +23,7 @@ pipeline {
             steps {
                 sh "docker build -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ./backend"
                 sh "docker build -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} ./frontend"
+                sh "docker build -t ${DB_IMAGE}:${BUILD_NUMBER} ./database"
             }
         }
         stage('Push') {
@@ -29,6 +31,7 @@ pipeline {
                 sh '''echo $CREDS_PSW | docker login ghcr.io -u $CREDS_USR --password-stdin'''
                 sh "docker push ${BACKEND_IMAGE}:${BUILD_NUMBER}"
                 sh "docker push ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
+                sh "docker push ${DB_IMAGE}:${BUILD_NUMBER}"
             }
         }
         stage('Deploy') {

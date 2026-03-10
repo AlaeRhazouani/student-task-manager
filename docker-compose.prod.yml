@@ -2,18 +2,17 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:16
+    image: ghcr.io/alaerhazouani/student-task-manager-db:latest
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - backend-database-network
   backend:
-    build: ./backend
+    image: ghcr.io/alaerhazouani/student-task-manager-backend:latest
     environment:
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
@@ -25,7 +24,7 @@ services:
     depends_on:
       - db
   frontend:
-    build: ./frontend
+    image: ghcr.io/alaerhazouani/student-task-manager-frontend:latest
     environment:
       BACKEND_URL: http://backend:5000
     networks:

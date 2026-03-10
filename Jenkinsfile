@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     environment {
-        BACKEND_IMAGE = "ghcr.io/AlaeRhazouani/student-task-manager-backend"
-        FRONTEND_IMAGE = "ghcr.io/AlaeRhazouani/student-task-manager-frontend"
+        BACKEND_IMAGE = "ghcr.io/alaeRhazouani/student-task-manager-backend"
+        FRONTEND_IMAGE = "ghcr.io/alaeRhazouani/student-task-manager-frontend"
         CREDS = credentials('ghcr-token')
     }
     

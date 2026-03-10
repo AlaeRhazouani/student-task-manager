@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'cd backend && pip install -r requirements.txt && pytest tests/'
+                sh 'cd backend && pip3 install -r requirements.txt && pytest tests/'
             }
         }
         stage('Build') {
@@ -46,10 +46,10 @@ pipeline {
     
     post {
         success {
-            sh 'curl -X POST $DISCORD_WEBHOOK -H "Content-Type: application/json" -d \'{"content":"Deploy Succeeded"}\''
+            echo 'Pipeline succeeded !'
         }
         failure {
-            sh 'curl -X POST $DISCORD_WEBHOOK -H "Content-Type: application/json" -d \'{"content":"Build Failed"}\''
+            echo 'Pipeline failed !'
         }
     }
 }   

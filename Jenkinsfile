@@ -36,8 +36,8 @@ pipeline {
                 sshagent(['server-ssh-key']) {
                     sh '''ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 "
                         cd /home/ubuntu/app &&
-                        docker compose pull &&
-                        docker compose up -d
+                        docker compose -f docker-compose.prod.yml pull &&
+                        docker compose -f docker-compose.prod.yml up -d
                     "'''
                 }
             }

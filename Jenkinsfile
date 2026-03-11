@@ -6,6 +6,7 @@ pipeline {
         FRONTEND_IMAGE = "ghcr.io/alaerhazouani/student-task-manager-frontend"
         DB_IMAGE = "ghcr.io/alaerhazouani/student-task-manager-db"
         CREDS = credentials('ghcr-token')
+        DISCORD_WEBHOOK = credentials('discord-webhook')
     }
     
     stages {
@@ -50,10 +51,10 @@ pipeline {
     
     post {
         success {
-            echo 'Pipeline succeeded !'
+            sh 'curl -X POST $DISCORD_WEBHOOK -H "Content-Type: application/json" -d \'{"content":" Deploy succeeded! Build #\'$BUILD_NUMBER\'"}\''
         }
         failure {
-            echo 'Pipeline failed !'
+            sh 'curl -X POST $DISCORD_WEBHOOK -H "Content-Type: application/json" -d \'{"content":" Build #\'$BUILD_NUMBER\' FAILED!"}\''
         }
     }
 }   

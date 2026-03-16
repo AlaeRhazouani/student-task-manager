@@ -41,9 +41,30 @@ pipeline {
                     sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                         cd /home/ubuntu/app &&
                         sed -i "s|:latest|:${BUILD_NUMBER}|g" docker-compose.prod.yml &&
-                        docker compose -f docker-compose.prod.yml pull &&
+                        docker compose -f docker-compose.prod.yml pull &&w
                         docker compose -f docker-compose.prod.yml up -d
                     '"""
+                }
+            }
+        }
+        stage('Health Check') {
+            steps {
+                sh 'curl -f  http://84.8.216.164:3000/health'
+                sh 'curl -f  http://84.8.216.164:5000/health'
+            }
+            post {
+                failure {
+                    script {
+                        int prevBuild = BUILD_NUMBER.toInteger() - 1
+                        sshagent(['server-ssh-key']) {
+                            sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
+                            cd /home/ubuntu/app &&
+                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml pull &&
+                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml up -d
+                            '"""
+                        }
+                    }
+                    
                 }
             }
         }

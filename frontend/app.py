@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
@@ -41,6 +41,10 @@ def update_task(id):
 def delete_task(id):
     requests.delete(f'{BACKEND_URL}/tasks/{id}')
     return redirect(url_for('index'))
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status":"OK"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)

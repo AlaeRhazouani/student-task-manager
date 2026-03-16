@@ -80,5 +80,9 @@ def delete_task(id):
         return jsonify({'error': 'Task not found'}), 404
     return jsonify({'message': 'Task deleted successfully'})
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status":"OK"}), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -22,9 +22,9 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh "docker build -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ./backend"
-                sh "docker build -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} ./frontend"
-                sh "docker build -t ${DB_IMAGE}:${BUILD_NUMBER} ./database"
+                sh "docker build --no-cache -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ./backend"
+                sh "docker build --no-cache -t  ${FRONTEND_IMAGE}:${BUILD_NUMBER} ./frontend"
+                sh "docker build --no-cache -t ${DB_IMAGE}:${BUILD_NUMBER} ./database"
             }
         }
         stage('Push') {

@@ -41,7 +41,7 @@ pipeline {
                     sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                         cd /home/ubuntu/app &&
                         BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.prod.yml pull &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.prod.yml up -d
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose --force-recreate -f docker-compose.prod.yml up -d
                     '"""
                 }
             }
@@ -59,7 +59,7 @@ pipeline {
                             sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                             cd /home/ubuntu/app &&
                             BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml pull &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml up -d
+                            BUILD_NUMBER=${prevBuild} docker compose --force-recreate -f docker-compose.prod.yml up -d
                             '"""
                         }
                     }

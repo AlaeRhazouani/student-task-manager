@@ -44,7 +44,14 @@ def delete_task(id):
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({"status":"OK"}), 200
+    try:
+        response = requests.get(f'{BACKEND_URL}/health')
+        if response.status_code == 200:
+            return jsonify({"status": "OK"}), 200
+        else:
+            return jsonify({"status": "backend unhealthy"}), 503
+    except:
+        return jsonify({"status": "backend unreachable"}), 503
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)

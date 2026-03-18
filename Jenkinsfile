@@ -51,7 +51,6 @@ pipeline {
             steps {
                 sleep 5
                 sh 'curl -f  http://84.8.216.164:3000/health'
-                sh 'curl -f  http://84.8.216.164:5000/health'
             }
             post {
                 failure {

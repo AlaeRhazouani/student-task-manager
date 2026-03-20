@@ -44,8 +44,8 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.staging.yml ubuntu@84.8.216.164:/home/ubuntu/app/docker-compose.staging.yml"
                     sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                         cd /home/ubuntu/app &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.staging.yml pull &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.staging.yml up -d --force-recreate
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.staging.yml pull &&
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.staging.yml up -d --force-recreate
                     '"""
                 }
             }
@@ -59,8 +59,8 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.prod.yml ubuntu@84.8.216.164:/home/ubuntu/app/docker-compose.prod.yml"
                     sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                         cd /home/ubuntu/app &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.prod.yml pull &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.prod.yml up -d --force-recreate
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.prod.yml pull &&
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.prod.yml up -d --force-recreate
                     '"""
                 }
             }
@@ -80,8 +80,8 @@ pipeline {
                         sshagent(['server-ssh-key']) {
                             sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                             cd /home/ubuntu/app &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.staging.yml pull &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.staging.yml up -d --force-recreate
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.staging.yml pull &&
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.staging.yml up -d --force-recreate
                             '"""
                         }
                     }
@@ -104,8 +104,8 @@ pipeline {
                         sshagent(['server-ssh-key']) {
                             sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                             cd /home/ubuntu/app &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml pull &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml up -d --force-recreate
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.prod.yml pull &&
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.prod.yml up -d --force-recreate
                             '"""
                         }
                     }

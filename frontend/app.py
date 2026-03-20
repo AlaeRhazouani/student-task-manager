@@ -4,6 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
+#sfsdfsdfsdfsdf
+
 BACKEND_URL = os.environ.get('BACKEND_URL', 'http://backend:5000')
 
 @app.route('/')

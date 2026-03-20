@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: ghcr.io/alaerhazouani/student-task-manager-db:${BUILD_NUMBER}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - dataStage:/var/lib/postgresql/data
+    networks:
+      - backend-database-network
+  backend:
+    image: ghcr.io/alaerhazouani/student-task-manager-backend:${BUILD_NUMBER}
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - backend-database-network
+      - frontend-backend-network
+    depends_on:
+      - db
+  frontend:
+    image: ghcr.io/alaerhazouani/student-task-manager-frontend:${BUILD_NUMBER}
+    environment:
+      BACKEND_URL: http://backend:5000
+    networks:
+      - frontend-backend-network
+    depends_on:
+      - backend
+    ports:
+      - 3001:3000
+
+volumes:
+  dataStage:
+networks:
+  backend-database-network:
+  frontend-backend-network:
+

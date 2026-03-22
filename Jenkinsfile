@@ -35,19 +35,64 @@ pipeline {
                 sh "docker push ${DB_IMAGE}:${BUILD_NUMBER}"
             }
         }
-        stage('Deploy') {
+        stage('Deploy to Staging') {
+            when {
+                not { branch 'main' }
+            }
+            steps {
+                sshagent(['server-ssh-key']) {
+                    sh "scp -o StrictHostKeyChecking=no docker-compose.staging.yml ubuntu@84.8.216.164:/home/ubuntu/app/docker-compose.staging.yml"
+                    sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
+                        cd /home/ubuntu/app &&
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.staging.yml pull &&
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.staging.yml up -d --force-recreate
+                    '"""
+                }
+            }
+        }
+        stage('Deploy to Production') {
+            when {
+                branch 'main'
+            }
             steps {
                 sshagent(['server-ssh-key']) {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.prod.yml ubuntu@84.8.216.164:/home/ubuntu/app/docker-compose.prod.yml"
                     sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                         cd /home/ubuntu/app &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.prod.yml pull &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -f docker-compose.prod.yml up -d --force-recreate
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.prod.yml pull &&
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.prod.yml up -d --force-recreate
                     '"""
                 }
             }
         }
-        stage('Health Check') {
+        stage('Health Check Staging') {
+            when {
+                not { branch 'main' }
+            }
+            steps {
+                sleep 5
+                sh 'curl -f  http://84.8.216.164:3001/health'
+            }
+            post {
+                failure {
+                    script {
+                        int prevBuild = BUILD_NUMBER.toInteger() - 1
+                        sshagent(['server-ssh-key']) {
+                            sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
+                            cd /home/ubuntu/app &&
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.staging.yml pull &&
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.staging.yml up -d --force-recreate
+                            '"""
+                        }
+                    }
+                    
+                }
+            }
+        }
+        stage('Health Check Production') {
+            when {
+                branch 'main'
+            }
             steps {
                 sleep 5
                 sh 'curl -f  http://84.8.216.164:3000/health'
@@ -59,8 +104,8 @@ pipeline {
                         sshagent(['server-ssh-key']) {
                             sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                             cd /home/ubuntu/app &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml pull &&
-                            BUILD_NUMBER=${prevBuild} docker compose -f docker-compose.prod.yml up -d --force-recreate
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.prod.yml pull &&
+                            BUILD_NUMBER=${prevBuild} docker compose -p staging -f docker-compose.prod.yml up -d --force-recreate
                             '"""
                         }
                     }

@@ -7,7 +7,7 @@ services:
       - /home/ubuntu/app/prometheus.yml:/etc/prometheus/prometheus.yml
       - /home/ubuntu/app/alert.rules.yml:/etc/prometheus/alert.rules.yml
     networks:
-      - backend-database-network
+      - ${NETWORK_PREFIX}_backend-database-network
     ports:
       - 9090:9090
 
@@ -18,17 +18,17 @@ services:
     ports:
       - 9093:9093 
     networks:
-      - backend-database-network
+      - ${NETWORK_PREFIX}_backend-database-network
 
   grafana:
     image: grafana/grafana
 
     networks:
-      - backend-database-network
+      - ${NETWORK_PREFIX}_backend-database-network
 
     ports:
       - 3002:3000
 
 networks:
-  backend-database-network:
+  ${NETWORK_PREFIX}_backend-database-network:
     external: true

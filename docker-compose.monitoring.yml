@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - /home/ubuntu/app/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/ubuntu/app/alert.rules.yml:/etc/prometheus/alert.rules.yml
+    networks:
+      - backend-database-network
+    ports:
+      - 9090:9090
+
+  alertmanager:
+    image: prom/alertmanager
+    volumes:
+      - /home/ubuntu/app/${ALERTMANAGER_CONFIG}:/etc/alertmanager/alertmanager.yml
+    ports:
+      - 9093:9093 
+    networks:
+      - backend-database-network
+
+  grafana:
+    image: grafana/grafana
+
+    networks:
+      - backend-database-network
+
+    ports:
+      - 3002:3000
+
+networks:
+  backend-database-network:
+    external: true

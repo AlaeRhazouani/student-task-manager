@@ -41,7 +41,7 @@ services:
       - backend-database-network
     depends_on:
       - db
-
+  
 volumes:
   dataStage:
 networks:

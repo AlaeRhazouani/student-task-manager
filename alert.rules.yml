@@ -1,0 +1,14 @@
+groups:
+  - name: app_alerts
+    rules:
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 1m
+        annotations:
+          summary: "PostgreSQL is down"
+
+      - alert: ErrorRate
+        expr: rate(flask_http_request_total{status=~"5.."}[5m]) > 0.1
+        for: 1m
+        annotations:
+          summary: "High error rate detected on Flask backend"

@@ -59,8 +59,8 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no docker-compose.prod.yml ubuntu@84.8.216.164:/home/ubuntu/app/docker-compose.prod.yml"
                     sh """ssh -o StrictHostKeyChecking=no ubuntu@84.8.216.164 '
                         cd /home/ubuntu/app &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.prod.yml pull &&
-                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p staging -f docker-compose.prod.yml up -d --force-recreate
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p production -f docker-compose.prod.yml pull &&
+                        BUILD_NUMBER=${BUILD_NUMBER} docker compose -p production -f docker-compose.prod.yml up -d --force-recreate
                     '"""
                 }
             }
